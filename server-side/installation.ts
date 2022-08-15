@@ -30,7 +30,9 @@ export async function uninstall(client: Client, request: Request): Promise<any> 
 }
 
 export async function upgrade(client: Client, request: Request): Promise<any> {
-    return {success:true,resultObject:{}}
+    const res = await createBlockRelation(client, true);
+    return res;
+    // return {success:true,resultObject:{}}
 }
 
 export async function downgrade(client: Client, request: Request): Promise<any> {
@@ -41,24 +43,27 @@ async function createBlockRelation(client: Client, isPageBlock: boolean): Promis
         // TODO: change to block name (this is the unique relation name and the description that will be on the block).
         const blockName = 'ScriptPickerTester';
 
-        const filename = `file_${client.AddonUUID.replace(/-/g, '_').toLowerCase()}`;
+        const filename = `file_${client.AddonUUID}`;
 
         const pageComponentRelation: Relation = {
             RelationName: isPageBlock ? 'PageBlock' : 'AddonBlock',
             Name: blockName,
             Description: `${blockName} block`,
             Type: "NgComponent",
-            SubType: "NG11",
+            SubType: "NG14",
             AddonUUID: client.AddonUUID,
             AddonRelativeURL: filename,
             ComponentName: `BlockComponent`, // This is should be the block component name (from the client-side)
             ModuleName: `BlockModule`, // This is should be the block module name (from the client-side)
+            ElementsModule: 'WebComponents',
+            ElementName: `block-element-${client.AddonUUID}`,
         };
 
         // For Page block we need to declare the editor data.
         if (isPageBlock) {
-            pageComponentRelation['EditorComponentName'] = `BlockEditorComponent`, // This is should be the block editor component name (from the client-side)
-            pageComponentRelation['EditorModuleName'] = `BlockEditorModule` // This is should be the block editor module name (from the client-side)}
+            pageComponentRelation['EditorComponentName'] = `BlockEditorComponent`; // This is should be the block editor component name (from the client-side)
+            pageComponentRelation['EditorModuleName'] = `BlockEditorModule`; // This is should be the block editor module name (from the client-side)}
+            pageComponentRelation['EditorElementName'] = `block-editor-element-${client.AddonUUID}`;
         }
 
         const service = new MyService(client);

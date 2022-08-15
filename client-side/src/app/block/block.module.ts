@@ -10,28 +10,22 @@ import { PepTextareaModule } from '@pepperi-addons/ngx-lib/textarea';
 
 import { config } from '../addon.config';
 
-export const routes: Routes = [
-    {
-        path: '',
-        component: BlockComponent
-    }
-];
 
 @NgModule({
     declarations: [BlockComponent],
     imports: [
         CommonModule,
+        PepNgxLibModule,
         PepTextareaModule,
         PepButtonModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
                 useFactory: (addonService: PepAddonService) => 
-                    PepAddonService.createMultiTranslateLoader(addonService, ['ngx-lib', 'ngx-composite-lib'], config.AddonUUID),
+                    PepAddonService.createMultiTranslateLoader(config.AddonUUID, addonService, ['ngx-lib']),
                 deps: [PepAddonService]
             }, isolate: false
-        }),
-        RouterModule.forChild(routes)
+        })
     ],
     exports: [BlockComponent],
     providers: [
